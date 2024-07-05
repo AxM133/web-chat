@@ -1,0 +1,112 @@
+/* Общие стили */
+body {
+  background-color: #00AA72;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.App {
+  color: #fff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  gap: 20px;
+}
+
+.top-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.bottom-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.sign-up-prompt {
+  margin-top: 20px;
+}
+
+.sign-up-link {
+  color: #00ffab;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Стили формы регистрации и авторизации */
+.container-registor, .container-login {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.input-email, .input-password {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.input-email:focus, .input-password:focus {
+  outline: none;
+  border-color: #00AA72;
+  box-shadow: 0 0 5px rgba(0, 170, 114, 0.5);
+}
+
+.regist-btn, .login-btn, .signout-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #00AA72;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.regist-btn:hover, .login-btn:hover, .singout-btn:hover {
+  background-color: #008a5e;
+}
+
+p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.authuser {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.textauthuser {
+  font-size: 18px;
+  color: #000;
+}
