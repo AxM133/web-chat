@@ -1,34 +1,36 @@
+import React from 'react';
 import './App.css';
-import SignUp from './components/auth/SignUp';
-import SignIn from './components/auth/SignIn';
-import AuthDetails from './components/auth/AuthDetails';
-import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import AuthForm from './components/auth/AuthForm';
+import Profile from './components/auth/Profile';
+import ChatRooms from './components/ChatRooms';
+import ChatRoom from './components/ChatRoom';
+import { AuthProvider, useAuth } from './Auth';
 
-const App = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
+function PrivateRoute({ element: Element, ...rest }) {
+  const { currentUser } = useAuth();
+  return currentUser ? <Element {...rest} /> : <Navigate to="/auth" />;
+}
 
-  const toggleSignUp = () => {
-    setIsSignUp(!isSignUp);
-  };
-
+function App() {
   return (
-    <div className="App">
-      <div className="top-section">
-        {isSignUp ? <SignUp /> : <SignIn />}
-      </div>
-      {!isSignUp && (
-        <div className="sign-up-prompt">
-          <p>
-            Чтобы зарегистрироваться: <span className="sign-up-link" onClick={toggleSignUp}>Sign Up</span>
-          </p>
-        </div>
-      )}
-      <div className="bottom-section">
-        <AuthDetails />
-      </div>
-    </div>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/auth" element={<AuthForm />} />
+          <Route path="/profile" element={<PrivateRoute element={Profile} />} />
+          <Route path="/chatrooms" element={<PrivateRoute element={ChatRooms} />} />
+          <Route path="/chatroom/:id" element={<PrivateRoute element={ChatRoom} />} />
+          <Route path="*" element={<AuthCheck />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
-};
+}
+
+function AuthCheck() {
+  const { currentUser } = useAuth();
+  return currentUser ? <Navigate to="/profile" /> : <Navigate to="/auth" />;
+}
 
 export default App;
-
