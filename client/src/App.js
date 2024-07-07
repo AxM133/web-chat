@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './App.css'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import AuthForm from './components/auth/AuthForm';
 import Profile from './components/auth/Profile';
@@ -30,7 +30,7 @@ function App() {
 
 function AuthCheck() {
   const { currentUser } = useAuth();
-  return currentUser ? <Navigate to="/profile" /> : <Navigate to="/auth" />;
+  return currentUser ? <Navigate to="/chatrooms" /> : <Navigate to="/auth" />;
 }
 
 export default App;

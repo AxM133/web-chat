@@ -1,7 +1,5 @@
 /* Общие стили для формы */
 form {
-    width: 300px;
-    margin: 50px auto;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 10px;
@@ -15,13 +13,28 @@ form {
   }
   
   input {
-    width: 92%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
   }
   
+  input.login-input {
+    width: 93%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  input.register-input {
+    width: 93%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
   button {
     width: 100%;
     padding: 10px;
