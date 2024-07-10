@@ -1,79 +1,94 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useParams } from 'react-router-dom';
 import { db } from '../firebase';
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, getDoc, doc } from 'firebase/firestore';
 import { useAuth } from '../Auth';
-import { FaArrowLeft, FaPaperPlane } from 'react-icons/fa';
 import './ChatRoom.css';
 
 function ChatRoom() {
-  const { id } = useParams();
+  const { roomId } = useParams();
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const navigate = useNavigate();
+  const [nickname, setNickname] = useState('');
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    const messagesRef = collection(db, 'chatrooms', id, 'messages');
-    const q = query(messagesRef, orderBy('createdAt', 'asc'));
+    console.log('roomId:', roomId); // Отладка
+    if (!roomId) {
+      console.error('Room ID is not defined');
+      return;
+    }
+    const fetchNickname = async () => {
+      if (currentUser) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          if (userDoc.exists()) {
+            setNickname(userDoc.data().nickname || '');
+          }
+        } catch (error) {
+          console.error('Error fetching nickname:', error);
+        }
+      }
+    };
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      setMessages(querySnapshot.docs.map(doc => doc.data()));
+    fetchNickname();
+  }, [currentUser, roomId]);
+
+  useEffect(() => {
+    if (!roomId) return;
+    const messagesRef = collection(db, 'chatrooms', roomId, 'messages');
+    const q = query(messagesRef, orderBy('createdAt'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const messages = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setMessages(messages);
       scrollToBottom();
     });
 
     return unsubscribe;
-  }, [id]);
+  }, [roomId]);
 
-  const handleSend = async (e) => {
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (newMessage.trim() === '') return;
 
-    const messagesRef = collection(db, 'chatrooms', id, 'messages');
+    const messagesRef = collection(db, 'chatrooms', roomId, 'messages');
     await addDoc(messagesRef, {
       text: newMessage,
       createdAt: serverTimestamp(),
       uid: currentUser.uid,
-      displayName: currentUser.email
+      nickname: nickname
     });
 
     setNewMessage('');
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const handleGoToProfile = () => {
-    navigate('/profile');
-  };
-
   return (
-    <div className="chat-room-container">
-      <div className="chat-room-header">
-        <FaArrowLeft className="back-icon" onClick={handleGoToProfile} />
-        <h2>Chat Room</h2>
-      </div>
+    <div className="chat-room">
       <div className="messages">
-        {messages.map((msg, index) => (
-          <div key={index} className={`message ${msg.uid === currentUser.uid ? 'sent' : 'received'}`}>
-            <h4>{msg.text}</h4>
-            <span>{msg.displayName}</span>
+        {messages.map((message) => (
+          <div key={message.id} className={`message ${message.uid === currentUser?.uid ? 'sent' : 'received'}`}>
+            <p>{message.text}</p>
+            <small>{message.nickname}</small>
           </div>
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <form onSubmit={handleSend} className="send-message-form">
+      <form onSubmit={handleSendMessage}>
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type a message"
+          placeholder="Type a message..."
         />
-        <button type="submit" className="send-button">
-          <FaPaperPlane />
-        </button>
+        <button type="submit">Send</button>
       </form>
     </div>
   );

@@ -13,23 +13,23 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
 
-  function signup(email, password) {
+  const signup = (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password).then(async (userCredential) => {
-      // Create user document in Firestore
       await setDoc(doc(db, 'users', userCredential.user.uid), {
         email: email,
-        avatarUrl: ''
+        avatarUrl: '',
+        nickname: 'User' 
       });
     });
-  }
+  };
 
-  function login(email, password) {
+  const login = (email, password) => {
     return signInWithEmailAndPassword(auth, email, password);
-  }
+  };
 
-  function logout() {
+  const logout = () => {
     return signOut(auth);
-  }
+  };
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {

@@ -1,58 +1,59 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../Auth';
+import './Auth.css';
 
 function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
+      return alert('Passwords do not match');
     }
-
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      await signup(email, password);
       navigate('/profile');
     } catch (error) {
-      setError(error.message);
+      console.error('Failed to create account:', error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Register</h2>
-      {error && <p>{error}</p>}
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <input
-        type="password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        placeholder="Confirm Password"
-        required
-      />
-      <button type="submit">Register</button>
-    </form>
+    <div className="auth-container">
+      <form onSubmit={handleSubmit}>
+        <h2>Register</h2>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+        />
+        <button type="submit">Register</button>
+        <p>
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
+      </form>
+    </div>
   );
 }
 

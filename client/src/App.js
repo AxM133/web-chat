@@ -1,36 +1,53 @@
 import React from 'react';
-import './App.css'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import AuthForm from './components/auth/AuthForm';
+import { AuthProvider, useAuth } from './Auth';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 import Profile from './components/auth/Profile';
 import ChatRooms from './components/ChatRooms';
 import ChatRoom from './components/ChatRoom';
-import { AuthProvider, useAuth } from './Auth';
 
-function PrivateRoute({ element: Element, ...rest }) {
+function PrivateRoute({ children }) {
   const { currentUser } = useAuth();
-  return currentUser ? <Element {...rest} /> : <Navigate to="/auth" />;
+  return currentUser ? children : <Navigate to="/login" />;
 }
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <Routes>
-          <Route path="/auth" element={<AuthForm />} />
-          <Route path="/profile" element={<PrivateRoute element={Profile} />} />
-          <Route path="/chatrooms" element={<PrivateRoute element={ChatRooms} />} />
-          <Route path="/chatroom/:id" element={<PrivateRoute element={ChatRoom} />} />
-          <Route path="*" element={<AuthCheck />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/chatrooms"
+            element={
+              <PrivateRoute>
+                <ChatRooms />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/chatroom/:roomId"
+            element={
+              <PrivateRoute>
+                <ChatRoom />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/" element={<Navigate to="/profile" />} />
         </Routes>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
-}
-
-function AuthCheck() {
-  const { currentUser } = useAuth();
-  return currentUser ? <Navigate to="/chatrooms" /> : <Navigate to="/auth" />;
 }
 
 export default App;
