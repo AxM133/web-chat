@@ -14,7 +14,6 @@ function ChatRoom() {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    console.log('roomId:', roomId); // Отладка
     if (!roomId) {
       console.error('Room ID is not defined');
       return;

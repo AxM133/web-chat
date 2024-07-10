@@ -36,7 +36,7 @@ function Profile() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate('/auth');
+      navigate('/login');
     } catch (error) {
       console.error('Error signing out: ', error);
     }
@@ -53,7 +53,7 @@ function Profile() {
 
   const handleNicknameChange = async () => {
     try {
-      await updateDoc(doc(db, 'users', currentUser.uid), { nickname: nickname });
+      await updateDoc(doc(db, 'users', currentUser.uid), { nickname });
       setEditingNickname(false);
     } catch (error) {
       console.error('Error updating nickname:', error);

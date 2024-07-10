@@ -25,7 +25,7 @@ function Register() {
 
   return (
     <div className="auth-container">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="auth-form">
         <h2>Register</h2>
         <input
           type="email"
