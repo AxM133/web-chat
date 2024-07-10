@@ -69,19 +69,23 @@ function Profile() {
           <div className="nickname-container">
             {editingNickname ? (
               <input
+                className='input-nickname'
                 type="text"
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 onBlur={handleNicknameChange}
               />
             ) : (
-              <h2>
-                {nickname}
+              <div className="nickname-display">
+                <span className="nickname-label">Nickname:</span>
+                <span className="nickname-value">{nickname}</span>
                 <button onClick={() => setEditingNickname(true)} className="edit-button">✏️</button>
-              </h2>
+              </div>
             )}
           </div>
-          <p>Email: {currentUser.email}</p>
+          <div className="email-container">
+            <span>Email: {currentUser.email}</span>
+          </div>
           <button onClick={handleLogout}>Logout</button>
           <button onClick={() => navigate('/chatrooms')}>Go to Chat Rooms</button>
         </div>

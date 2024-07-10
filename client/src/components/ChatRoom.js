@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
 import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, getDoc, doc } from 'firebase/firestore';
 import { useAuth } from '../Auth';
@@ -7,6 +7,7 @@ import './ChatRoom.css';
 
 function ChatRoom() {
   const { roomId } = useParams();
+  const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -71,6 +72,12 @@ function ChatRoom() {
 
   return (
     <div className="chat-room">
+      <div className='header-chatrooms'>
+        <button className="back-button" onClick={() => navigate('/chatrooms')}>
+          ←
+        </button>
+        <h2 className="chat-title">{roomId}</h2>
+      </div>
       <div className="messages">
         {messages.map((message) => (
           <div key={message.id} className={`message ${message.uid === currentUser?.uid ? 'sent' : 'received'}`}>

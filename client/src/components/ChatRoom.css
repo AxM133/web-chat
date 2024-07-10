@@ -10,10 +10,35 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.back-button {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #333;
+  cursor: pointer;
+  margin-bottom: 20px;
+  width: 40px;
+}
+
+.back-button:hover {
+  color: #ffffff;
+}
+
+.header-chatrooms {
+  display: flex;
+  align-items: center;
+}
+
+.chat-title {
+  margin: 10px 13vw 25px 13vw;
+}
+
 .messages {
   flex: 1;
   overflow-y: auto;
   margin-bottom: 20px;
+  padding: 8px;
 }
 
 .message {
@@ -21,7 +46,7 @@
   border-radius: 10px;
   margin-bottom: 10px;
   position: relative;
-  max-width: 80%;
+  max-width: 100%;
 }
 
 .message.sent {
@@ -70,6 +95,7 @@ form button {
   color: #fff;
   cursor: pointer;
   transition: background 0.3s ease;
+  width: 80px;
 }
 
 form button:hover {

@@ -18,7 +18,7 @@
   cursor: pointer;
 }
 
-h1, h2 {
+h1 {
   color: #333;
 }
 
@@ -43,16 +43,39 @@ button:hover {
   background: #c9302c;
 }
 
-.nickname-container {
+.nickname-container,
+.email-container {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  margin: 10px 0;
+}
+
+.nickname-display {
+  display: flex;
+  align-items: center;
+}
+
+.nickname-label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.nickname-value {
+  word-break: break-all;
 }
 
 .edit-button {
   background: none;
   border: none;
   cursor: pointer;
-  margin-left: 10px;
+  font-size: 16px;
+  padding: 5px;
+  width: 35px;
+  margin: 10px 0px 10px 60px;
+}
+
+.input-nickname {
+  padding: 5px;
   font-size: 16px;
 }

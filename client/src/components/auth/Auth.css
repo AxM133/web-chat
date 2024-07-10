@@ -1,3 +1,65 @@
+/* Сброс стилей для всех элементов */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Основные стили для body */
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+  }
+  
+  /* Центрирование содержимого */
+  .app-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  /* Стили для заголовков */
+  h1, h2 {
+    color: #333;
+  }
+  
+  /* Общие стили для кнопок */
+  button {
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  /* Плавный переход для всех изменений */
+  button:hover {
+    background-color: #4cae4c;
+  }
+  
+  /* Стиль для ссылок */
+  a {
+    color: #5cb85c;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Форма для вывода ошибок */
+  .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+  
+  /* Форма для успешного сообщения */
+  .success-message {
+    color: green;
+    margin-top: 10px;
+  }
+  
+/* --------------------------------------- */
+
 .auth-container {
     display: flex;
     justify-content: center;
@@ -11,8 +73,9 @@
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    width: 400px;
     text-align: center;
+    flex-direction: column;
   }
   
   .auth-form h2 {
