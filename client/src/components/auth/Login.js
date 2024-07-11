@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../Auth';
+import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase';
 import './Auth.css';
 
-function Login() {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       navigate('/profile');
     } catch (error) {
-      console.error('Failed to log in:', error);
+      console.error('Error signing in with password and email', error);
     }
   };
 
@@ -26,24 +26,24 @@ function Login() {
         <input
           type="email"
           placeholder="Email"
+          required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
         />
         <input
           type="password"
           placeholder="Password"
+          required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
         />
         <button type="submit">Login</button>
         <p>
-          Don't have an account? <Link to="/register">Register</Link>
+          Don't have an account? <a href="/register">Register</a>
         </p>
       </form>
     </div>
   );
-}
+};
 
 export default Login;

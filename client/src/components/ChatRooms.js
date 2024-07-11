@@ -5,16 +5,18 @@ import './ChatRooms.css';
 const ChatRooms = () => {
   const navigate = useNavigate();
 
+  const handleClick = (path) => {
+    navigate(path);
+  };
+
   return (
     <div className="chat-rooms">
-      <div className='display-back-btn'>
-        <button className="back-button" onClick={() => navigate('/profile')}>
-          ←
-        </button>
-      </div>
+      <button className="back-button" onClick={() => navigate('/profile')}>
+        ←
+      </button>
       <h2>Chat Rooms</h2>
-      <div className="chat-room-link">
-        <Link to={`/chatroom/general`}>General</Link>
+      <div className="chat-room-link" onClick={() => handleClick('/chatroom/general')}>
+        General
       </div>
     </div>
   );
