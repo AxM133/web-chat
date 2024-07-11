@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, setDoc } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, doc, setDoc, getDoc } from 'firebase/firestore';
 import { useAuth } from '../Auth';
 import './ChatRoom.css';
 
@@ -12,14 +12,32 @@ function ChatRoom() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [typingUsers, setTypingUsers] = useState([]);
+  const [roomName, setRoomName] = useState('');
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+
+  const clearTypingStatus = useCallback(async () => {
+    if (currentUser) {
+      await setDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: false, lastUpdated: serverTimestamp() }, { merge: true });
+    }
+  }, [currentUser, roomId]);
 
   useEffect(() => {
     if (!roomId) {
       console.error('Room ID is not defined');
       return;
     }
+
+    const fetchRoomName = async () => {
+      const roomDoc = await getDoc(doc(db, 'chatrooms', roomId));
+      if (roomDoc.exists()) {
+        setRoomName(roomDoc.data().name);
+      } else {
+        console.error('Room does not exist');
+      }
+    };
+
+    fetchRoomName();
 
     const messagesRef = collection(db, 'chatrooms', roomId, 'messages');
     const q = query(messagesRef, orderBy('createdAt'));
@@ -44,7 +62,7 @@ function ChatRoom() {
       typingUnsubscribe();
       clearTypingStatus();
     };
-  }, [roomId]);
+  }, [roomId, clearTypingStatus]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -64,7 +82,7 @@ function ChatRoom() {
 
     setNewMessage('');
     clearTypingTimeout();
-    await updateDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: false });
+    await setDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: false, lastUpdated: serverTimestamp() }, { merge: true });
   };
 
   const handleTyping = async (e) => {
@@ -75,16 +93,10 @@ function ChatRoom() {
     }
 
     typingTimeoutRef.current = setTimeout(async () => {
-      await updateDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: false });
+      await setDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: false, lastUpdated: serverTimestamp() }, { merge: true });
     }, 3000);
 
-    await setDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: true, lastUpdated: serverTimestamp() });
-  };
-
-  const clearTypingStatus = async () => {
-    if (currentUser) {
-      await updateDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: false });
-    }
+    await setDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: true, lastUpdated: serverTimestamp() }, { merge: true });
   };
 
   const clearTypingTimeout = () => {
@@ -99,7 +111,7 @@ function ChatRoom() {
         <button className="back-button" onClick={() => navigate('/chatrooms')}>
           ←
         </button>
-        <h2 className="chat-title">{roomId}</h2>
+        <h2 className="chat-title">{roomName}</h2>
       </div>
       <div className="messages">
         {messages.map((message) => (

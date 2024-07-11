@@ -71,7 +71,22 @@ button:hover {
   font-size: 16px;
   padding: 5px;
   width: 35px;
-  margin: 10px 0px 10px 60px;
+  margin: 10px 0px 10px 10px;
+}
+
+.small-save-button {
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px;
+  margin-left: 5px;
+  color: #333;
+  background-color: #5acd5e;
+}
+
+.small-save-button:hover {
+  background-color: #4CAF50;
+  color: #fff;
 }
 
 .input-nickname {

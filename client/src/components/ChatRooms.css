@@ -1,37 +1,64 @@
 .chat-rooms {
-  width: 300px;
-  margin: 50px auto;
+  max-width: 400px;
+  margin: 20px auto;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background: #f9f9f9;
+  background: #fff;
+  border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  position: relative;
+}
+
+.chat-rooms input[type="text"] {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.chat-rooms button {
+  border: none;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.chat-rooms button:hover {
+  background-color: #45a049;
+}
+
+.room-results {
+  margin-top: 20px;
+}
+
+.room-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.room-item p {
+  margin: 0;
+}
+
+.room-item a {
+  text-decoration: none;
+  color: #4CAF50;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
 }
 
 .back-button {
-  display: flex;
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #333;
-  cursor: pointer;
-}
-
-h2 {
-  margin-top: 0;
-  font-size: 24px;
-}
-
-.chat-room-link {
-  background: #f1f1f1;
-  padding: 10px;
-  border-radius: 10px;
-  margin: 10px 0;
-  cursor: pointer;
-}
-
-.chat-room-link:hover {
-  background: #e1e1e1;
+  display: block;
+  margin-bottom: 20px;
+  text-decoration: none;
+  color: #4CAF50;
 }

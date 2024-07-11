@@ -15,14 +15,18 @@
   background: none;
   border: none;
   font-size: 18px;
-  color: #333;
+  color: #000000;
   cursor: pointer;
   margin-bottom: 20px;
   width: 40px;
+  border-radius: 25px;
+  text-decoration: none;
 }
 
 .back-button:hover {
   color: #ffffff;
+  background-color: #4cae4c;
+  text-decoration: none;
 }
 
 .header-chatrooms {
@@ -35,41 +39,49 @@
 }
 
 .messages {
-  flex: 1;
+  border: groove;
+  flex: 1 1;
   overflow-y: auto;
   margin-bottom: 20px;
   padding: 8px;
+  border-radius: 20px;
+}
+/* чтобы скрыть scrollbar  */
+.messages::-webkit-scrollbar { 
+  display: none;
 }
 
 .message {
-  padding: 10px;
-  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   margin-bottom: 10px;
-  position: relative;
-  max-width: 100%;
 }
 
 .message.sent {
-  background-color: #dcf8c6;
-  align-self: flex-end;
-  text-align: right;
-}
-
-.message.received {
-  background-color: #f1f1f1;
-  align-self: flex-start;
-  text-align: left;
+  align-items: flex-end;
 }
 
 .message p {
+  background: #e4e6eb;
+  padding: 10px;
+  border-radius: 10px;
   margin: 0;
+  max-width: 60%;
+  word-wrap: break-word;
+}
+
+.message.sent p {
+  background: #d4edda;
 }
 
 .message small {
-  display: block;
+  font-size: 12px;
+  color: #666;
   margin-top: 5px;
-  color: #888;
+  align-self: flex-start;
 }
+
 
 form {
   display: flex;
@@ -88,7 +100,6 @@ form input {
 }
 
 form button {
-  padding: 10px 20px;
   border: none;
   border-radius: 5px;
   background-color: #5cb85c;

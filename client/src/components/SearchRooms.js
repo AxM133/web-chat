@@ -3,9 +3,9 @@ import { useAuth } from '../Auth';
 import { db } from '../firebase';
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
-import './ChatRooms.css';
+import './SearchRooms.css';
 
-function ChatRooms() {
+function SearchRooms() {
   const [searchTerm, setSearchTerm] = useState('');
   const [rooms, setRooms] = useState([]);
   const [roomName, setRoomName] = useState('');
@@ -13,18 +13,25 @@ function ChatRooms() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchRooms = async () => {
-      const q = searchTerm ? query(collection(db, 'chatrooms'), where('name', '>=', searchTerm), where('name', '<=', searchTerm + '\uf8ff')) : collection(db, 'chatrooms');
-      const querySnapshot = await getDocs(q);
-      const fetchedRooms = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setRooms(fetchedRooms);
-    };
-
-    fetchRooms();
+    if (searchTerm) {
+      const fetchRooms = async () => {
+        const q = query(collection(db, 'chatrooms'), where('name', '>=', searchTerm), where('name', '<=', searchTerm + '\uf8ff'));
+        const querySnapshot = await getDocs(q);
+        const fetchedRooms = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setRooms(fetchedRooms);
+      };
+      fetchRooms();
+    } else {
+      setRooms([]);
+    }
   }, [searchTerm]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+  };
 
   const handleCreateRoom = async (e) => {
     e.preventDefault();
@@ -58,15 +65,18 @@ function ChatRooms() {
   };
 
   return (
-    <div className="chat-rooms">
-      <Link to="/profile" className="back-button">←</Link>
+    <div className="search-rooms">
+      <Link to="/" className="back-button">←</Link>
       <h2>Chat Rooms</h2>
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search for rooms"
-      />
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search for rooms"
+        />
+        <button type="submit">Search</button>
+      </form>
       <form onSubmit={handleCreateRoom}>
         <input
           type="text"
@@ -89,4 +99,4 @@ function ChatRooms() {
   );
 }
 
-export default ChatRooms;
+export default SearchRooms;
