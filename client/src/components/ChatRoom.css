@@ -101,3 +101,9 @@ form button {
 form button:hover {
   background-color: #4cae4c;
 }
+
+.typing-indicator {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 10px;
+}

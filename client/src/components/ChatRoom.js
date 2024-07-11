@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, getDoc, doc } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../Auth';
 import './ChatRoom.css';
 
@@ -11,32 +11,16 @@ function ChatRoom() {
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [nickname, setNickname] = useState('');
+  const [typingUsers, setTypingUsers] = useState([]);
   const messagesEndRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
 
   useEffect(() => {
     if (!roomId) {
       console.error('Room ID is not defined');
       return;
     }
-    const fetchNickname = async () => {
-      if (currentUser) {
-        try {
-          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-          if (userDoc.exists()) {
-            setNickname(userDoc.data().nickname || '');
-          }
-        } catch (error) {
-          console.error('Error fetching nickname:', error);
-        }
-      }
-    };
 
-    fetchNickname();
-  }, [currentUser, roomId]);
-
-  useEffect(() => {
-    if (!roomId) return;
     const messagesRef = collection(db, 'chatrooms', roomId, 'messages');
     const q = query(messagesRef, orderBy('createdAt'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -48,7 +32,18 @@ function ChatRoom() {
       scrollToBottom();
     });
 
-    return unsubscribe;
+    const typingRef = collection(db, 'typing-indicators', roomId, 'users');
+    const typingQuery = query(typingRef, orderBy('lastUpdated'));
+    const typingUnsubscribe = onSnapshot(typingQuery, (snapshot) => {
+      const typingUsers = snapshot.docs.map(doc => doc.data());
+      setTypingUsers(typingUsers);
+    });
+
+    return () => {
+      unsubscribe();
+      typingUnsubscribe();
+      clearTypingStatus();
+    };
   }, [roomId]);
 
   const scrollToBottom = () => {
@@ -64,10 +59,38 @@ function ChatRoom() {
       text: newMessage,
       createdAt: serverTimestamp(),
       uid: currentUser.uid,
-      nickname: nickname
+      nickname: currentUser.displayName,
     });
 
     setNewMessage('');
+    clearTypingTimeout();
+    await updateDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: false });
+  };
+
+  const handleTyping = async (e) => {
+    setNewMessage(e.target.value);
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(async () => {
+      await updateDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: false });
+    }, 3000);
+
+    await setDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: true, lastUpdated: serverTimestamp() });
+  };
+
+  const clearTypingStatus = async () => {
+    if (currentUser) {
+      await updateDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: false });
+    }
+  };
+
+  const clearTypingTimeout = () => {
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
   };
 
   return (
@@ -87,11 +110,16 @@ function ChatRoom() {
         ))}
         <div ref={messagesEndRef} />
       </div>
+      <div className="typing-indicator">
+        {typingUsers.map((user) => (
+          user.uid !== currentUser.uid && user.typing && <span key={user.uid}>{user.nickname} is typing...</span>
+        ))}
+      </div>
       <form onSubmit={handleSendMessage}>
         <input
           type="text"
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          onChange={handleTyping}
           placeholder="Type a message..."
         />
         <button type="submit">Send</button>
