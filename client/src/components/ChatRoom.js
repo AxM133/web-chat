@@ -34,6 +34,7 @@ function ChatRoom() {
         setRoomName(roomDoc.data().name);
       } else {
         console.error('Room does not exist');
+        navigate('/chatrooms');
       }
     };
 
@@ -62,7 +63,7 @@ function ChatRoom() {
       typingUnsubscribe();
       clearTypingStatus();
     };
-  }, [roomId, clearTypingStatus]);
+  }, [roomId, clearTypingStatus, navigate]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

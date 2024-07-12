@@ -22,17 +22,20 @@
   color: white;
   border-radius: 4px;
   cursor: pointer;
+  padding: 10px 20px;
 }
 
 .chat-rooms button:hover {
   background-color: #45a049;
 }
 
-.room-results {
+.room-results,
+.user-rooms {
   margin-top: 20px;
 }
 
-.room-item {
+.room-item,
+.user-room-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -42,13 +45,25 @@
   margin: 10px 0;
 }
 
-.room-item p {
+.room-item p,
+.user-room-item a {
   margin: 0;
 }
 
-.room-item a {
-  text-decoration: none;
-  color: #4CAF50;
+.room-item button,
+.user-room-item button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  width: auto;
+}
+
+.room-item button:hover,
+.user-room-item button:hover {
+  background-color: #45a049;
 }
 
 .error {
