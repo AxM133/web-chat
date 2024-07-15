@@ -13,6 +13,7 @@ function ChatRoom() {
   const [newMessage, setNewMessage] = useState('');
   const [typingUsers, setTypingUsers] = useState([]);
   const [roomName, setRoomName] = useState('');
+  const [nickname, setNickname] = useState('');
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
@@ -34,11 +35,19 @@ function ChatRoom() {
         setRoomName(roomDoc.data().name);
       } else {
         console.error('Room does not exist');
-        navigate('/chatrooms');
       }
     };
 
     fetchRoomName();
+
+    const fetchUserNickname = async () => {
+      const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+      if (userDoc.exists()) {
+        setNickname(userDoc.data().nickname || 'User');
+      }
+    };
+
+    fetchUserNickname();
 
     const messagesRef = collection(db, 'chatrooms', roomId, 'messages');
     const q = query(messagesRef, orderBy('createdAt'));
@@ -48,7 +57,7 @@ function ChatRoom() {
         ...doc.data()
       }));
       setMessages(messages);
-      scrollToBottom();
+      scrollToBottom(); // Прокрутка к последнему сообщению при загрузке
     });
 
     const typingRef = collection(db, 'typing-indicators', roomId, 'users');
@@ -63,7 +72,11 @@ function ChatRoom() {
       typingUnsubscribe();
       clearTypingStatus();
     };
-  }, [roomId, clearTypingStatus, navigate]);
+  }, [roomId, currentUser, clearTypingStatus]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -78,7 +91,7 @@ function ChatRoom() {
       text: newMessage,
       createdAt: serverTimestamp(),
       uid: currentUser.uid,
-      nickname: currentUser.displayName,
+      nickname: nickname,  // Add nickname here
     });
 
     setNewMessage('');
