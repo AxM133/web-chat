@@ -13,6 +13,7 @@ function ChatRooms() {
   const [error, setError] = useState('');
   const [userRooms, setUserRooms] = useState([]);
   const [userRoomDetails, setUserRoomDetails] = useState([]);
+  const [showCreateRoom, setShowCreateRoom] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
@@ -98,6 +99,7 @@ function ChatRooms() {
       });
 
       setRoomName('');
+      setShowCreateRoom(false);
     } catch (err) {
       setError('Failed to create room');
       console.error('Error creating room: ', err);
@@ -134,23 +136,23 @@ function ChatRooms() {
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Search for rooms"
       />
-      <form onSubmit={handleCreateRoom}>
-        <input
-          type="text"
-          value={roomName}
-          onChange={(e) => setRoomName(e.target.value)}
-          placeholder="Create a new room"
-        />
-        <button type="submit">Create</button>
-      </form>
-      {error && <p className="error">{error}</p>}
-      <div className="room-results">
-        {rooms.map((room) => (
-          <div key={room.id} className="room-item">
-            <p>{room.name}</p>
-            <button onClick={() => handleJoinRoom(room.id)}>Join</button>
+      <div className="create-room-toggle">
+        <button onClick={() => setShowCreateRoom(!showCreateRoom)}>+</button>
+        {showCreateRoom && (
+          <div className="create-room">
+            <h3>Create ChatRoom</h3>
+            <form onSubmit={handleCreateRoom} className="create-room-form">
+              <input
+                type="text"
+                value={roomName}
+                onChange={(e) => setRoomName(e.target.value)}
+                placeholder="Create a new room"
+              />
+              <button className='create-room-btn' type="submit">Create</button>
+            </form>
+            {error && <p className="error">{error}</p>}
           </div>
-        ))}
+        )}
       </div>
       <h3>My Rooms</h3>
       <div className="user-rooms">
@@ -158,6 +160,14 @@ function ChatRooms() {
           <div key={room.id} className="user-room-item">
             <Link to={`/chatroom/${room.id}`}>{room.name}</Link>
             <button onClick={() => handleLeaveRoom(room.id)}>Leave</button>
+          </div>
+        ))}
+      </div>
+      <div className="room-results">
+        {rooms.map((room) => (
+          <div key={room.id} className="room-item">
+            <p>{room.name}</p>
+            <button onClick={() => handleJoinRoom(room.id)}>Join</button>
           </div>
         ))}
       </div>
