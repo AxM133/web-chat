@@ -12,7 +12,7 @@ function ChatRoom() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [typingUsers, setTypingUsers] = useState([]);
-  const [roomName, setRoomName] = useState('');
+  const [roomName, setRoomName] = useState('Room not found');
   const [nickname, setNickname] = useState('');
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
@@ -22,6 +22,10 @@ function ChatRoom() {
       await setDoc(doc(db, 'typing-indicators', roomId, 'users', currentUser.uid), { typing: false, lastUpdated: serverTimestamp() }, { merge: true });
     }
   }, [currentUser, roomId]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
     if (!roomId) {
@@ -78,10 +82,6 @@ function ChatRoom() {
     scrollToBottom();
   }, [messages]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (newMessage.trim() === '') return;
@@ -91,7 +91,7 @@ function ChatRoom() {
       text: newMessage,
       createdAt: serverTimestamp(),
       uid: currentUser.uid,
-      nickname: nickname,  // Add nickname here
+      nickname: nickname,
     });
 
     setNewMessage('');

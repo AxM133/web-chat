@@ -8,6 +8,7 @@ import './ChatRooms.css';
 function ChatRooms() {
   const [searchTerm, setSearchTerm] = useState('');
   const [rooms, setRooms] = useState([]);
+  const [roomId, setRoomId] = useState('');
   const [roomName, setRoomName] = useState('');
   const { currentUser } = useAuth();
   const [error, setError] = useState('');
@@ -73,21 +74,22 @@ function ChatRooms() {
     e.preventDefault();
     setError('');
 
-    if (roomName.trim() === '') {
-      setError('Room name is required');
+    if (roomId.trim() === '' || roomName.trim() === '') {
+      setError('Room ID and name are required');
       return;
     }
 
-    const q = query(collection(db, 'chatrooms'), where('name', '==', roomName));
+    const q = query(collection(db, 'chatrooms'), where('id', '==', roomId));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-      setError('Room name already exists');
+      setError('Room ID already exists');
       return;
     }
 
     try {
       const newRoom = await addDoc(collection(db, 'chatrooms'), {
+        id: roomId,
         name: roomName,
         owner: currentUser.uid,
         members: [currentUser.uid],
@@ -98,6 +100,7 @@ function ChatRooms() {
         rooms: arrayUnion(newRoom.id)
       });
 
+      setRoomId('');
       setRoomName('');
       setShowCreateRoom(false);
     } catch (err) {
@@ -140,17 +143,25 @@ function ChatRooms() {
         <button onClick={() => setShowCreateRoom(!showCreateRoom)}>+</button>
         {showCreateRoom && (
           <div className="create-room">
-            <h3>Create ChatRoom</h3>
-            <form onSubmit={handleCreateRoom} className="create-room-form">
-              <input
-                type="text"
-                value={roomName}
-                onChange={(e) => setRoomName(e.target.value)}
-                placeholder="Create a new room"
-              />
-              <button className='create-room-btn' type="submit">Create</button>
-            </form>
-            {error && <p className="error">{error}</p>}
+            <div className='display-create-room'>
+              <h3>Create ChatRoom</h3>
+              <form onSubmit={handleCreateRoom} className="create-room-form">
+                <input
+                  type="text"
+                  value={roomId}
+                  onChange={(e) => setRoomId(e.target.value)}
+                  placeholder="Room ID"
+                />
+                <input
+                  type="text"
+                  value={roomName}
+                  onChange={(e) => setRoomName(e.target.value)}
+                  placeholder="Room Name"
+                />
+                <button className='create-room-btn' type="submit">Create</button>
+              </form>
+              {error && <p className="error">{error}</p>}
+            </div>
           </div>
         )}
       </div>

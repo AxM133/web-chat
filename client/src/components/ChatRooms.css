@@ -32,13 +32,13 @@
   font-size: 24px;
   position: absolute;
   right: -61px;
-  top: 0;
+  top: -100px;
 }
 
 .create-room {
   position: absolute;
   right: -370px;
-  top: 0;
+  top: -100px;
   width: 350px;
   padding: 20px;
   background: #fff;
@@ -138,4 +138,9 @@
   margin-bottom: 20px;
   text-decoration: none;
   color: #4CAF50;
+}
+
+.display-create-room form {
+  display: flex;
+  flex-direction: column;
 }
